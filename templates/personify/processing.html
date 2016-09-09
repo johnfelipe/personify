@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="section">
+    <div class="container">
+      <div class="text-center">
+        <h3>Hold tight.</h3>
+        <p>Your profile is being created.</p>
+      </div>
+      <div class="sea">
+        <div class="circle-wrapper">
+            <div class="bubble"></div>
+            <div class="submarine-wrapper">
+                <div class="submarine-body">
+                    <div class="window"></div>
+                    <div class="engine"></div>
+                    <div class="light"></div>
+                </div>
+                <div class="helix"></div>
+                <div class="hat">
+                  <div class="leds-wrapper">
+                      <div class="periscope"></div>
+                      <div class="leds"></div>
+                  </div>
+                </div>
+            </div>
+        </div>
+      </div>
+      <p><br /></p>
+      <div class="text-center">
+        <p>
+          Nothing happens? <a href="{% url 'personify:profile' profile.share_key %}">Click here.</a>
+        </p>
+      </div>
+      <div class="text-right">
+        <p class="text-muted"><small>Animation by <a href="http://codepen.io/ajerez" target="_blank" rel="nofollow">Alberto Jerez</a></small></p>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+<script type="text/javascript">
+  $(function() {
+    $.get({
+      url: "{% url 'personify:profile' profile.share_key %}",
+      complete: function() {
+        window.location = "{% url 'personify:profile' profile.share_key %}";
+      }
+    })
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,347 @@
+{% extends "base.html" %}
+
+{% load staticfiles personify %}
+
+{% block title %}{{ profile.name }} - Personality profile{% endblock %}
+
+{% block content %}
+  <div class="section">
+    <div class="container">
+      <br/>
+      <div class="row">
+        <div class="col-md-6 col-md-offset-4">
+          <div class="media media-post">
+              <span class="pull-left author">
+                  <div class="avatar">
+                    <img class="media-object img-circle img-lead" alt="{{ profile.name }}" src="{{ profile.picture_url }}">
+                  </div>
+              </span>
+              <div class="media-body">
+                <h2>
+                  {{ profile.name }}
+                </h2>
+              </div>
+          </div>
+        </div>
+      </div>
+
+      <p><br /></p>
+
+      <div class="well">
+        <div class="row">
+          <div class="col-xs-12 col-sm-7">
+            <h4 class="text-center">Personality profile</h4>
+            <hr />
+            <div id="profile-summary">
+              <p>...</p>
+            </div>
+          </div>
+          <div class="col-xs-12 col-sm-5">
+            {% if famous_people %}
+            {% with famous_people.0 as other_profile %}
+            <h4 class="text-center">Similar personality:</h4>
+            <hr />
+              <div class="media media-post">
+                  <span class="pull-left author">
+                      <div class="avatar">
+                        <img class="media-object img-circle" alt="{{ other_profile.name }}" src="{{ other_profile.picture_url }}">
+                      </div>
+                  </span>
+                  <div class="media-body">
+                    <h4>
+                      <a href="{% url 'personify:profile' other_profile.share_key %}">{{ other_profile.name }}</a>
+                    </h4>
+                    {{ other_profile.ratio|floatformat }}% similar
+                    <div class="progress progress-line-primary">
+                      <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: {{ other_profile.ratio|floatformat:0 }}%;">
+                        <span class="sr-only">{{ other_profile.ratio|floatformat:0 }}</span>
+                      </div>
+                    </div>
+                    <a href="{% url 'personify:compare' other_profile.share_key profile.share_key %}" class="pull-right">See comparison <i class="fa fa-clone" aria-hidden="true"></i></a>
+                  </div>
+                  <br />
+              </div>
+            {% endwith %}
+            {% endif %}
+            {% if not own_profile %}
+            <div class="text-center">
+              <a href="{% url 'personify:compare' profile.share_key %}" class="btn btn-primary">How does {{ profile }}<br />compare to me?</a>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <p><br /><br /></p>
+
+      <div class="row">
+        {% for other_profile in famous_people|slice:"1:" %}
+        <div class="col-sm-4">
+          <div class="media media-post">
+              <span class="pull-left author">
+                  <div class="avatar">
+                    <img class="media-object img-circle" alt="{{ other_profile.name }}" src="{{ other_profile.picture_url }}">
+                  </div>
+              </span>
+              <div class="media-body">
+                <h4>
+                  <a href="{% url 'personify:profile' other_profile.share_key %}">{{ other_profile.name }}</a>
+                </h4>
+                {{ other_profile.ratio|floatformat }}% similar
+                <div class="progress progress-line-primary">
+                  <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: {{ other_profile.ratio|floatformat:0 }}%;">
+                    <span class="sr-only">{{ other_profile.ratio|floatformat:0 }}</span>
+                  </div>
+                </div>
+                <a href="{% url 'personify:compare' other_profile.share_key profile.share_key %}" title="Compare" class="pull-right"><i class="fa fa-clone" aria-hidden="true"></i></a>
+              </div>
+              <br />
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      <p><br /></p>
+
+      {% if own_profile %}
+      <h3 class="text-center">Friends</h3>
+      <hr />
+
+      <div class="row">
+        {% for other_profile in friends %}
+        <div class="col-sm-4">
+          <div class="media media-post">
+              <span class="pull-left author">
+                  <div class="avatar">
+                    <img class="media-object img-circle" alt="{{ other_profile.name }}" src="{{ other_profile.picture_url }}">
+                  </div>
+              </span>
+              <div class="media-body">
+                <h4>
+                  <a href="{% url 'personify:profile' other_profile.share_key %}">{{ other_profile.name }}</a>
+                </h4>
+                {{ other_profile.ratio|floatformat }}% similar
+                <div class="progress progress-line-primary">
+                  <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: {{ other_profile.ratio|floatformat:0 }}%;">
+                    <span class="sr-only">{{ other_profile.ratio|floatformat:0 }}</span>
+                  </div>
+                </div>
+                <a href="{% url 'personify:compare' other_profile.share_key profile.share_key %}" title="Compare" class="pull-right"><i class="fa fa-clone" aria-hidden="true"></i></a>
+              </div>
+              <br />
+          </div>
+        </div>
+        {% empty %}
+          <h4 class="text-center">No friends logged in here yet <i class="fa fa-frown-o" aria-hidden="true"></i></h4>
+        {% endfor %}
+      </div>
+
+      <p><br /></p>
+
+      <div class="row">
+        <div class="col-md-8 col-md-offset-2 well">
+            <div class="text-center">
+              <h4>Share to invite friends and see how you compare:</h4>
+              <p>
+                {% if profile.facebook %}
+                <a href="https://www.facebook.com/sharer/sharer.php?u={{ share_url|urlencode }}" target="_blank" class="btn btn-fill btn-facebook">
+                  <i class="fa fa-facebook"></i> Share on Facebook
+                </a>
+                {% elif profile.twitter %}
+                <a href="https://twitter.com/intent/tweet?url={{ share_url|urlencode }}" target="_blank"  class="btn btn-fill btn-twitter">
+                  <i class="fa fa-twitter"></i> Tweet
+                </a>
+                {% endif %}
+              </p>
+              <p>
+                When you friends log in and create a profile, you can see how you compare with them.
+              </p>
+            </div>
+        </div>
+      </div>
+
+      <p><br /><br /><br /></p>
+      {% endif %}
+
+      <a name="stats"><hr /></a>
+
+      <div class="row">
+
+        <div class="col-sm-12 col-md-4">
+
+          <h4 class="text-center">Personality (Big Five)</h4><br />
+
+          <dl class="dl-horizontal">
+          {% for name, props in result.personality.items %}
+              <dt>
+                {% if props.children %}
+                <a data-toggle="collapse" href="#pers-{{ name|slugify }}" aria-expanded="false" aria-controls="pers-{{ name|slugify }}">{{ name|capfirst }} <b class="caret"></b></a>
+                {% else %}
+                {{ name|capfirst }}
+                {% endif %}
+              </dt>
+              <dd>
+                  <div class="dt-tooltip" data-toggle="tooltip" data-placement="top" title="{{ tooltips.big5|get_item:name }}" data-container="body">
+                    {{ props.percentage|floatformat:0 }}%
+                    <div class="progress progress-line-info">
+                      <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="{{ props.percentage|floatformat:0 }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ props.percentage|floatformat:0 }}%;">
+                        <span class="sr-only">{{ props.percentage|floatformat:2 }}</span>
+                      </div>
+                    </div>
+                  </div>
+              </dd>
+              {% if props.children %}
+              <div class="row collapse" id="pers-{{ name|slugify }}">
+              <div class="col-xs-offset-2">
+              {% for name2, props2 in props.children.items %}
+              <dt>
+                {{ name2|capfirst }}
+              </dt>
+              <dd>
+                  <div class="dt-tooltip" data-toggle="tooltip" data-placement="top" title="{{ tooltips.big5|get_item:name2 }}" data-container="body">
+                    {{ props2.percentage|floatformat:0 }}%
+                    <div class="progress progress-line-info">
+                      <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="{{ props.percentage|floatformat:0 }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ props2.percentage|floatformat:0 }}%;">
+                        <span class="sr-only">{{ props2.percentage|floatformat:2 }}</span>
+                      </div>
+                    </div>
+                  </div>
+              </dd>
+              {% endfor %}
+              </div>
+              </div>
+              {% endif %}
+          {% endfor %}
+          </dl>
+
+        </div>
+
+        <div class="col-sm-12 col-md-4">
+
+          <h4 class="text-center">Values</h4><br />
+
+          <dl class="dl-horizontal">
+          {% for name, props in result.values.items %}
+              <dt>
+                {{ name|capfirst }}
+              </dt>
+              <dd>
+                <div class="dt-tooltip" data-toggle="tooltip" data-placement="top" title="{{ tooltips.values|get_item:name }}" data-container="body">
+                  <div class="dt-tooltip" data-toggle="tooltip" data-placement="top" title="{{ tooltips.big5|get_item:name }}" data-container="body">
+                    {{ props.percentage|floatformat:0 }}%
+                    <div class="progress progress-line-info">
+                      <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="{{ props.percentage|floatformat:0 }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ props.percentage|floatformat:0 }}%;">
+                        <span class="sr-only">{{ props.percentage|floatformat:2 }}</span>
+                      </div>
+                    </div>
+                </div>
+              </dd>
+          {% endfor %}
+          </dl>
+
+        </div>
+
+        <div class="col-sm-12 col-md-4">
+
+          <h4 class="text-center">Needs</h4><br />
+
+          <dl class="dl-horizontal">
+          {% for name, props in result.needs.items %}
+              {% if forloop.counter == 6 %}
+              <p class="text-right">
+                <a data-toggle="collapse" href="#needs-more" aria-expanded="false" aria-controls="pers-{{ name|slugify }}">... <i class="fa fa-caret-down" aria-hidden="true"></i></a>
+              </p>
+              <div class="collapse" id="needs-more">
+              {% endif %}
+              <dt>
+                {{ name|capfirst }}
+              </dt>
+              <dd>
+                <div class="dt-tooltip" data-toggle="tooltip" data-placement="top" title="{{ tooltips.needs|get_item:name }}" data-container="body">
+                    {{ props.percentage|floatformat:0 }}%
+                    <div class="progress progress-line-info">
+                      <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="{{ props.percentage|floatformat:0 }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ props.percentage|floatformat:0 }}%;">
+                        <span class="sr-only">{{ props.percentage|floatformat:2 }}</span>
+                      </div>
+                    </div>
+                </div>
+              </dd>
+              {% if forloop.counter > 5 and forloop.last %}
+              </div>
+              {% endif %}
+          {% endfor %}
+          </dl>
+
+        </div>
+
+      </div>
+
+      <div class="row">
+
+        {% if not own_profile %}
+        <a href="{% url 'personify:compare' profile.share_key %}" class="link-red">Show how this compares to mine <i class="fa fa-angle-right" aria-hidden="true"></i></a>
+        {% endif %}
+
+        <hr />
+
+        <div class="col-xs-12">
+          <div class="text-center">
+            <h4>Share:</h4>
+            <p>
+              <a href="https://www.facebook.com/sharer/sharer.php?u={{ share_url|urlencode }}" target="_blank" class="btn btn-fill btn-facebook">
+                <i class="fa fa-facebook"></i> Share
+              </a>
+              or
+              <a href="https://twitter.com/intent/tweet?url={{ share_url|urlencode }}" target="_blank" class="btn btn-fill btn-twitter">
+                <i class="fa fa-twitter"></i> Tweet
+              </a>
+            </p>
+          </div>
+        </div>
+
+        {% if own_profile %}
+        <div class="cols-xs-12 text-right">
+          <p class="text-muted"><small><a href="#" class="btn btn-default btn-simple" data-toggle="modal" data-target="#modal">Delete my profile</a></small></p>
+        </div>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Are you sure?</h4>
+      </div>
+      <div class="modal-body">
+        <p>You can delete all your data right now if you wish to do so.</p>
+        <p><strong>If you've shared this, the link will no longer work.</strong></p>
+        <p>Your friends will not be able to see this anymore.</p>
+      </div>
+      <div class="modal-footer">
+        <form action="{% url 'personify:delete' profile.share_key %}" method="post">
+          {% csrf_token %}
+          <button type="button" class="btn btn-default btn-simple" data-dismiss="modal">No, sorry</button>
+          <button type="submit" class="btn btn-danger btn-simple" name="delete">Yes, delete</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="{% static 'personify/js/personality-text-summary.standalone.js' %}"></script>
+<script type="text/javascript">
+  $(function() {
+    $('.dt-tooltip').tooltip();
+
+    var textSummary = new TextSummary('en');
+    var text = textSummary.getSummary({{ profile.personality_raw|jsonify }});
+    var parts = text.split('\n');
+    $('#profile-summary').html("<p>" + parts.join("</p><p>" + "</p>"));
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+  <div class="section">
+    <div class="container">
+      <div class="text-center">
+        <h1>Not much to say</h1>
+        <p>
+          Sorry, it looks like there's not many posts on your social profile.
+        </p>
+        <p>
+          This tool needs at least <strong>100 words</strong> to build a profile.
+        </p>
+        <p>
+          <img src="{% static 'images/404.gif' %}" title="Page not found" alt="Page not found" />
+        </p>
+        <p>
+          Maybe try with a different account?
+        </p>
+        <hr />
+        <p>
+          <a href="/" class="btn btn-primary">Take me home</a>
+        </p>
+      </div>
+    </div>
+  </div>
+{% endblock %}
