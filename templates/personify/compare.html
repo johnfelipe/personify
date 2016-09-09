@@ -177,7 +177,6 @@
               </dt>
               <dd>
                   <div class="dt-tooltip" data-toggle="tooltip" data-placement="top" title="{{ tooltips.big5|get_item:name }}" data-container="body">
-                  {% if other_profile %}
                   {% with other_profile.get_personality.personality|get_item:name|get_item:'percentage' as other_result %}
                     {{ props.percentage|floatformat:0 }}%
                     <small>(vs <span class="danger">{{ other_result|floatformat:0 }}%</span>)</small>
@@ -192,15 +191,6 @@
                       </div>
                     </div>
                   {% endwith %}
-                  {% else %}
-                    <div class="dt-tooltip" data-toggle="tooltip" data-placement="top" title="{{ tooltips.big5|get_item:name }}" data-container="body">
-                      {{ props.percentage|floatformat:0 }}%
-                      <div class="progress progress-line-info">
-                        <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="{{ props.percentage|floatformat:0 }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ props.percentage|floatformat:0 }}%;">
-                          <span class="sr-only">{{ props.percentage|floatformat:2 }}</span>
-                        </div>
-                      </div>
-                  {% endif %}
                   </div>
               </dd>
               {% if props.children %}
@@ -212,7 +202,6 @@
               </dt>
               <dd>
                   <div class="dt-tooltip" data-toggle="tooltip" data-placement="top" title="{{ tooltips.big5|get_item:name2 }}" data-container="body">
-                  {% if other_profile %}
                   {% with other_profile.get_personality.personality|get_item:name|get_item:'children'|get_item:name2|get_item:'percentage' as other_result %}
                     {{ props2.percentage|floatformat:0 }}%
                     <small>(vs <span class="danger">{{ other_result|floatformat:0 }}%</span>)</small>
@@ -227,15 +216,6 @@
                       </div>
                     </div>
                   {% endwith %}
-                  {% else %}
-                    {{ props2.percentage|floatformat:0 }}%
-                    <div class="progress progress-line-info">
-                      <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="{{ props.percentage|floatformat:0 }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ props2.percentage|floatformat:0 }}%;">
-                        <span class="sr-only">{{ props2.percentage|floatformat:2 }}</span>
-                      </div>
-                    </div>
-                  </div>
-                  {% endif %}
               </dd>
               {% endfor %}
               </div>
@@ -257,7 +237,6 @@
               </dt>
               <dd>
                 <div class="dt-tooltip" data-toggle="tooltip" data-placement="top" title="{{ tooltips.values|get_item:name }}" data-container="body">
-                {% if other_profile %}
                 {% with other_profile.get_personality.values|get_item:name|get_item:'percentage' as other_result %}
                   {{ props.percentage|floatformat:0 }}%
                   <small>(vs <span class="danger">{{ other_result|floatformat:0 }}%</span>)</small>
@@ -272,15 +251,6 @@
                     </div>
                   </div>
                 {% endwith %}
-                {% else %}
-                  <div class="dt-tooltip" data-toggle="tooltip" data-placement="top" title="{{ tooltips.big5|get_item:name }}" data-container="body">
-                    {{ props.percentage|floatformat:0 }}%
-                    <div class="progress progress-line-info">
-                      <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="{{ props.percentage|floatformat:0 }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ props.percentage|floatformat:0 }}%;">
-                        <span class="sr-only">{{ props.percentage|floatformat:2 }}</span>
-                      </div>
-                    </div>
-                {% endif %}
                 </div>
               </dd>
           {% endfor %}
@@ -305,7 +275,6 @@
               </dt>
               <dd>
                 <div class="dt-tooltip" data-toggle="tooltip" data-placement="top" title="{{ tooltips.needs|get_item:name }}" data-container="body">
-                {% if other_profile %}
                 {% with other_profile.get_personality.needs|get_item:name|get_item:'percentage' as other_result %}
                   {{ props.percentage|floatformat:0 }}%
                   <small>(vs <span class="danger">{{ other_result|floatformat:0 }}%</span>)</small>
@@ -320,15 +289,6 @@
                     </div>
                   </div>
                 {% endwith %}
-                {% else %}
-                  <div class="dt-tooltip" data-toggle="tooltip" data-placement="top" title="{{ tooltips.big5|get_item:name }}" data-container="body">
-                    {{ props.percentage|floatformat:0 }}%
-                    <div class="progress progress-line-info">
-                      <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="{{ props.percentage|floatformat:0 }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ props.percentage|floatformat:0 }}%;">
-                        <span class="sr-only">{{ props.percentage|floatformat:2 }}</span>
-                      </div>
-                    </div>
-                {% endif %}
                 </div>
               </dd>
               {% if forloop.counter > 5 and forloop.last %}
@@ -339,15 +299,21 @@
 
         </div>
 
+        <div class="text-muted text-center">
+          <small>
+            <span class="label label-info">&middot;</span>
+            {{ profile }}
+            &nbsp;&nbsp;&nbsp;
+            <span class="label label-danger">&middot;</span>
+            {{ other_profile }}
+          </small>
+        </div>
+
+        <hr />
+
       </div>
 
       <div class="row">
-
-        {% comment %}
-        <a href="{% url 'personify:profile' profile.share_key %}" class=""><i class="fa fa-times" aria-hidden="true"></i> Hide comparison</a>
-        {% endcomment %}
-
-        <hr />
 
         <div class="col-md-8 col-md-offset-2">
           <div class="text-center">

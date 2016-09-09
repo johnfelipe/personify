@@ -130,12 +130,18 @@ class Profile(TimeStampedModel):
     def flatten_personality(self, personality=None):
         personality = personality or self.personality
         flat = list()
+        if not personality:
+            self.sync_personality()
         try:
-            # using the big 5 traits only (found in the 'personality' store)
+            # first process the big 5 traits (found in the 'personality' store)
             for key, value in personality['personality'].items():
                 # assuming keys are always in the same order (alphabetical), because they seem to
                 # be returned like that by IBM Watson
                 flat.extend([v['percentage'] for v in value['children'].values()])
+            # then consumer needs
+            flat.extend([v['percentage'] for v in personality['needs'].values()])
+            # and finally values
+            flat.extend([v['percentage'] for v in personality['values'].values()])
         except KeyError:
             pass
         return flat
@@ -158,7 +164,6 @@ class Profile(TimeStampedModel):
                 pass
 
         self.personality = personality
-        self.personality_flat = self.flatten_personality()
         self.save()
 
         return self.personality
@@ -176,7 +181,8 @@ class Profile(TimeStampedModel):
 
     def get_personality_flat(self):
         if not self.personality_flat:
-            self.sync_personality()
+            self.personality_flat = self.flatten_personality()
+            self.save()
         return self.personality_flat
 
     def get_ratio(self, profile):
