@@ -80,7 +80,7 @@ class ProfileView(BaseProfileView):
             'profile': profile,
             'own_profile': profile.user == self.request.user,
             'result': profile.get_personality(),
-            'famous_people': profile.get_similar_famous(7 if profile.is_famous else 6),
+            'famous_people': profile.get_similar_famous(),
             'friends': profile.get_similar_friends(),
             'share_url': share_url,
             'tooltips': tooltips,

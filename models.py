@@ -191,7 +191,7 @@ class Profile(TimeStampedModel):
             return compared_set
         return sorted(compared_set, cmp=compare, reverse=True)
 
-    def get_similar_famous(self, limit=6):
+    def get_similar_famous(self, limit=7):
         return self.get_similar(Profile.objects.exclude(pk=self.pk).filter(is_famous=True))[:limit]
 
     def get_similar_friends(self):
